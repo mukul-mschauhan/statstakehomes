@@ -1,3 +1,3 @@
 # statstakehomes
 
-This contains the Statistics THs for 04 days.
+Statistics Take Homes Front Code Application Powered by Streamlit
