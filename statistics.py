@@ -5,6 +5,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 import scipy.stats as stats
 import random
+from statsmodels.stats import weightstats as stest
 
 # SideBar Radio Button
 sbar = st.sidebar.radio(label = "Statistics Take Homes", options = ["Day 01", "Day 02", "Day 03", "Day 04"])
@@ -20,12 +21,24 @@ q7 = st.container()
 q8 = st.container()
 q9 = st.container()
 q10 = st.container()
+q11 = st.container()
+q12 = st.container()
+q13 = st.container()
+q14 = st.container()
+q15 = st.container()
+q16 = st.container()
+q17 = st.container()
+q18 = st.container()
+q19 = st.container()
+q20 = st.container()
 
 with header:
     st.title("Statistics Take Homes")
     st.subheader("Let's begin with some hands-on practice exercises")
 
 
+############################################ D A Y 0 1 ##############################################################################
+#***********************************************************************************************************************************#
 #The rainfall (in mm) in the city is recorded for 10 days. Find the rainfall value under which 60% of the rainfall would lie.
 with q1:
     if sbar=="Day 01":
@@ -218,4 +231,365 @@ with q7:
             x = np.round(mu+ (z*sigma),3)
             st.write('Atleast {} litres is contained in 99% of bottles'.format(x))
         st.markdown("---")
+
+############################################ D A Y 0 2 ##############################################################################
+#***********************************************************************************************************************************#
+
+with q1:
+    if sbar=="Day 02":
+        q = f"**Q.1. The meteorological department states that on average the temperature on summer days is 82 (degree F) in California. \
+            For a study on climate change, a sample of data is collected for 20 summer days. Find the sampling error for the mean.**"
+        st.markdown(q)
+        st.write("Given Data:    **temp (in F) = [51, 68, 83, 93, 89, 58, 79, 54, 60, 77, 87, 57, 63, 85, 92, 74, 67, 88, 91, 82]**")
+        pressed = st.button("Q.1. Solution", True)
+        if pressed:
+            temp = [51, 68, 83, 93, 89, 58, 79, 54, 60, 77, 87, 57, 63, 85, 92, 74, 67, 88, 91, 82]
+            st.write("**Hint: ** Remember a sampling error occurs when the sample used in the study is not representative of the whole population.")
+            # calculate the point estimate for the population mean
+            samp_mean = np.mean(temp)
+            # given population mean
+            # calculate the sampling error for mean
+            pop_mean = 82
+            st.write("Sampling error for mean:", np.abs(samp_mean - pop_mean))
+        st.markdown("---")
+
+with q2:
+    if sbar=="Day 02":
+        q = f"**Q.2. A team of IT experts wants to estimate the average time required to a system to run a specific program. \
+            The team aims to estimate the average time with 95% confidence. A technical report from last week shows that the standard deviation is 3.8 minutes.\
+            The team decides that the margin of error should be 1.2 minutes. How many systems should the team choose for the estimation?.**"
+        st.markdown(q)
+        st.write("Given")
+        st.write("sigma = 3.8")
+        st.write("margin of error = 1.2")
+        pressed = st.button("Q.2. Solution", True)
+        if pressed:
+            st.latex("Hint: "r'''Margin  of Error = z * {\frac{\sigma}{\surd n}}''')
+            sigma = 3.8
+            me = 1.2
+            # Calculate Alpha 
+            z_alpha_by_2 = np.abs(round(stats.norm.isf(q = 0.05/2), 4))
+            # calculate sample size (n) 
+            n = ((z_alpha_by_2)**2)*(sigma**2)/(me**2)
+
+            st.write("Required number of systems for the time estimation study:", np.round(n))
+        st.markdown("---")
+        
+with q3:
+    if sbar=="Day 02":
+        q = f"**Q.3. The production manager at the Xen Sewing Factory claims that on average the diameter of a class 14M\
+            bobbin (small cylindrical yarn) is less than 18 mm. The previous study shows that the standard deviation is 1.7 mm. \
+                Consider a sample of 40 class 14M bobbins from a normally distributed population with sample mean diameter as 17.5 mm. \
+                    Calculate 99% confidence interval for the population mean diameter.**"
+        st.markdown(q)
+        approach = f"Approach: As the sample size is large (> 30), we use the Z-distribution to calculate the confidence interval."
+        st.write(approach)
+        pressed = st.button("Q.3. Solution", True)
+        if pressed:
+            st.write("**Hint:Use Mean and Standard Deviation to Calculate the Confidence Interval**")
+            n = 40
+            std_pop = 1.7
+            samp_mean = 17.5
+            
+            interval = np.round(stats.norm.interval(0.99, loc = samp_mean, scale = std_pop / np.sqrt(n)),2)
+            result = f"The 99% confidence interval of population mean is: **{interval}**"
+            st.markdown(result)         
+        st.markdown("---")
+        
+with q4:
+    if sbar=="Day 02":
+        q = f"**Q.4. A construction company wants to estimate the daily wages of contract workers. \
+            In the construction business, the wages of contract workers follow the normal distribution with a standard deviation of \
+                85 dollars. A sample of wages for 50 contract workers is considered for the study. \
+                    Calculate the margin of error for a 95% confidence level.**"
+        st.markdown(q)
+        #approach = f"Approach: As the sample size is large (> 30), we use the Z-distribution to calculate the confidence interval."
+        #st.write(approach)
+        pressed = st.button("Q.4. Solution", True)
+        if pressed:
+            #st.write("**Hint:Use Mean and Standard Deviation to Calculate the Confidence Interval**")
+            n = 50
+            std = 85
+            alpha= 0.95
+            
+            z_alpha_by_2 = np.abs(round(stats.norm.isf(q = 0.05/2), 4))
+            error = (z_alpha_by_2*std)/ np.sqrt(n)
+            result = f"The 99% confidence interval of population mean is: **{error}**"
+            st.markdown(result)         
+        st.markdown("---")
+        
+with q5:
+    if sbar=="Day 02":
+        q = f"**Q.5. To study the climate changes, a sample of data of temperature in California is collected for 20 summer days.\
+            Calculate 95% confidence interval for the population mean temperature.**"
+        st.markdown(q)
+        st.write("Given Data:    **temp (in F) = [51, 68, 83, 93, 89, 58, 79, 54, 60, 77, 87, 57, 63, 85, 92, 74, 67, 88, 91, 82]**")
+        pressed = st.button("Q.5. Solution", True)
+        if pressed:
+            approach = f"***Approach: As the sample size is small (< 30), we use the t-distribution to calculate the confidence interval.***"
+            st.write(approach)
+            #st.write("**Hint:Use Mean and Standard Deviation to Calculate the Confidence Interval**")
+            temp = [51, 68, 83, 93, 89, 58, 79, 54, 60, 77, 87, 57, 63, 85, 92, 74, 67, 88, 91, 82]
+            n = len(temp)
+            sample_avg = np.mean(temp)
+            sample_std = np.std(temp)
+            
+            interval = np.round(stats.t.interval(0.95, df = n-1, loc = sample_avg, scale = sample_std/np.sqrt(n)),2)
+            result = f"The 99% confidence interval of population mean is: **{interval}**"
+            st.markdown(result)         
+        st.markdown("---")
+        
+with q6:
+    if sbar=="Day 02":
+        q = f"**Q.6. A botanical garden in Manchester city planted 350 plant seeds of white, pink and blue lily in the last summer. \
+            After 3 months a sample of 125 plants was selected, out of which 80 plants were found to be of pink lilies. \
+            Find a 90% confidence interval for the population proportion of pink lily plants.**"
+        st.markdown(q)
+        #st.write("Given Data:    **temp (in F) = [51, 68, 83, 93, 89, 58, 79, 54, 60, 77, 87, 57, 63, 85, 92, 74, 67, 88, 91, 82]**")
+        pressed = st.button("Q.6. Solution", True)
+        if pressed:
+            #approach = f"***Approach: As the sample size is small (< 30), we use the t-distribution to calculate the confidence interval.***"
+            #st.write(approach)
+            #st.write("**Hint:Use Mean and Standard Deviation to Calculate the Confidence Interval**")
+            N = 350
+            n = 125
+            x = 80
+            p_samp = x/n
+            
+            interval = np.round(stats.norm.interval(0.90, loc = p_samp, scale = np.sqrt((p_samp*(1-p_samp))/n)),2)
+            result = f"90% confidence interval for population proportion of pink lily plants: **{interval}**"
+            st.markdown(result)         
+        st.markdown("---")
+
+with q7:
+    if sbar=="Day 02":
+        q = f"**Q.7. The quality assurance department claims that on average the non-fat yogurt contains less than 148 mg of \
+            potassium per 100 g pack. To check this claim 35 packs of yogurt are collected and the content of potassium is recorded. \
+            Can we use the Z-test to test the claim of the quality assurance department?**"
+        st.markdown(q)
+        
+        st.write("Given Data:    **pot_mg = [151, 159, 168, 146, 129, 147, 149, 141, 150, 158, 119, 125, 139, 154, 163, 156, 132, 137, 126, 152, 127, 135, 138, 145, 128, 148, 153, 124, 170, 134, 157, 164, 144, 160, 161]**")
+        approach = f"Approach: The given random sample is the quantity of potassium in a 100g pack of non-fat yogurt which is continuous \
+            in nature. **To apply the Z-test for the population mean we need to test whether the sample is taken from a normally distributed population**.\
+            Use the Shapiro-Wilk test to check the normality of the data."
+        st.write(approach)
+        
+        pressed = st.button("Q.7. Solution", True)
+        if pressed:
+            st.write("**Hint:** Use stats.shapiro to find if the data is normal or not..")
+            #approach = f"***Approach: As the sample size is small (< 30), we use the t-distribution to calculate the confidence interval.***"
+            #st.write(approach)
+            #st.write("**Hint:Use Mean and Standard Deviation to Calculate the Confidence Interval**")
+            pot_mg = [151, 159, 168, 146, 129, 147, 149, 141, 150, 158, 119, 125, 139, 154, 163, 156, 132, 137, 126, 152, 127, 135, 138, 145, 128, 148, 153, 124, 170, 134, 157, 164, 144, 160, 161]
+            stat, p_value = stats.shapiro(pot_mg)
+            
+            #interval = np.round(stats.norm.interval(0.90, loc = p_samp, scale = np.sqrt((p_samp*(1-p_samp))/n)),2)
+            result = f"PValue: **{p_value}**"
+            st.markdown(result)
+            st.write("From the above result, we can see that the p-value is greater than 0.05, thus we can say that the data is normally distributed.")         
+        st.markdown("---")
+
+with q8:
+    if sbar=="Day 02":
+        q = f"**Q.8. The quality assurance department claims that on average the non-fat yogurt contains less than 148 mg of potassium per 100 g pack. To check this claim 35 packs of yogurt are collected and the content of potassium is recorded. \
+            Use 0.05 as a level of significance to test the claim using p-value technique.**"
+        st.markdown(q)
+        st.write("Given Data:    ** pot_mg = [151, 159, 168, 146, 129, 147, 149, 141, 150, 158, 119, 125, 139, 154, 163, 156, 132, 137, 126, 152, 127, 135, 138, 145, 128, 148, 153, 124, 170, 134, 157, 164, 144, 160, 161]**")
+        approach = f"The Null and Alternative Hypothesis  is:"
+        st.markdown(approach)
+        st.latex(r''' Ho:\mu \geq 148 ''')
+        st.latex(r''' H1:\mu < 148 ''')
+        pressed = st.button("Q.8. Solution", True)
+        if pressed:
+            pot_mg = [151, 159, 168, 146, 129, 147, 149, 141, 150, 158, 119, 125, 139, 154, 163, 156, 132, 137, 126, 152,127, 135, 138, 145, 128, 148, 153, 124, 170, 134, 157, 164, 144, 160, 161]
+            z_score, pval = stest.ztest(x1 = pot_mg, value = 148, alternative = 'smaller')
+            
+            result = f"PValue: **{pval}**"
+            st.markdown(result) 
+            st.write("Here the p-value is greater than 0.05, thus we fail to reject (i.e. accept) the null hypothesis. Thus, there is no enough evidence to conclude that on average the non-fat yogurt contains less than 148 mg of potassium per 100 g pack.")       
+        st.markdown("---")
+        
+with q9:
+    if sbar=="Day 02":
+        q = f"**Q.9. The production manager at the Xen Sewing Factory claims that on average the diameter of a class 14M bobbin is less than 18 mm. The previous study shows that the standard deviation is 1.7 mm. Consider a sample of 40 class 14M bobbins from a normally distributed population with sample mean diameter as 17.5 mm. \
+            Test the claim of the production manager with 99% confidence.**"
+        st.markdown(q)
+        approach = f"The Null and Alternative Hypothesis  is:"
+        st.markdown(approach)
+        st.latex(r''' Ho:\mu \geq 18 ''')
+        st.latex(r''' H1:\mu < 18 ''')
+        pressed = st.button("Q.9. Solution", True)
+        if pressed:
+            def z_test(pop_mean, pop_std, n, samp_mean):
+       
+                # calculate the test statistic
+                z_score = (samp_mean - pop_mean) / (pop_std / np.sqrt(n))
+                return z_score
+            # given data
+            n = 40
+            pop_mean = 18
+            pop_std = 1.7
+            samp_mean = 17.5
+            # calculate the test statistic using the function 'z_test'
+            crit = stats.norm.isf(0.99)
+            z_score = z_test(pop_mean, pop_std, n, samp_mean)
+            st.write("**Critical Value:**", crit)
+            st.write("**Z Test Stat:** ", z_score)
+        st.markdown("---")
+            
+with q10:
+    if sbar=="Day 02":
+        q = f"**Q.10. The NY university has opened the post of Astrophysics professor. \
+            The total number of applications was 36. To check the authenticity of the applicants a sample of 10 applications was collected,\
+                out of which 3 applicants were found to be a fraud. \
+            Estimate the number of fraud applicants from all the applications.**"
+        st.markdown(q)
+        pressed = st.button("Q.10. Solution", True)
+        if pressed:
+            # total number of applications 
+            N = 36
+            # number of applications in a sample
+            n = 10
+            # number of fraud applicants in a sample
+            x = 3
+            # sample proportion fraud applicants
+            p_samp = x/n
+            # estimate the number of fraud applicants
+            num_fraud = p_samp*N
+            # round the number to get an integer value
+            st.write('The number of fraud applicants:', round(num_fraud))
+        st.markdown("---")
+        
+with q11:
+    if sbar=="Day 02":
+        q = f"**Q.11. The physical trainer at a university wants to estimate the average height of students at the university. \
+            The trainer collects the data of 100 students and found that the average height is 168 cm with a standard deviation of 12 cm. \
+                Find the 95% confidence interval for the population average height.**"
+        st.markdown(q)
+        pressed = st.button("Q.11. Solution", True)
+        if pressed:
+            st.write("**Approach: As the sample size is large (> 30), we use the Z-distribution to calculate the confidence interval.**")
+            n = 100
+            sample_avg = 168
+            sample_std = 12
+            interval = stats.norm.interval(0.95, loc = sample_avg, scale = sample_std/np.sqrt(n))
+            st.write('95% confidence interval for population average height is', interval)
+        st.markdown("---")
+        
+with q12:
+    if sbar=="Day 02":
+        q = f"**Q.12. The health magazine in Los Angeles states that a person should drink 1.8 L water every day.\
+            To study this statement, the physician collects the data of 15 people and found that the average water \
+                intake for these people is 1.6 L with a standard deviation of 0.5 L. \
+            Calculate the 90% confidence interval for the population average water intake.**"
+        st.markdown(q)
+        pressed = st.button("Q.12. Solution", True)
+        if pressed:
+            st.write("**Approach: As the sample size is small (< 30), we use the t-distribution to calculate the confidence interval.**")
+            n = 15
+            sample_avg = 1.6
+            sample_std = 0.5
+            interval = stats.t.interval(0.90, df = n-1, loc = sample_avg, scale = sample_std/np.sqrt(n))
+            st.write('90% confidence interval for population mean is', interval)
+        st.markdown("---")
+        
+with q13:
+    if sbar=="Day 02":
+        q = f"**Q.13. The production manager at the automobile company states that all the steel rods are produced with an average length of 26 cm and a standard deviation of 2.4 cm. The length of 60 rods is collected as a sample and the average length of these rods is found to be 24.8 cm. \
+            Test whether the length of the rod is different than 26 cm with a 95% confidence interval.**"
+        st.markdown(q)
+        approach = f"The Null and Alternative Hypothesis  is:"
+        st.markdown(approach)
+        st.latex(r''' Ho:\mu = 26 ''')
+        st.latex(r''' H1:\mu \not= 26 ''')
+        pressed = st.button("Q.13. Solution", True)
+        if pressed:
+            st.write("**Approach: As the Population SD is given, we use the Z-distribution to calculate the confidence interval.**")
+            n = 60
+            samp_avg = 24.8
+            pop_std = 2.4
+            interval = stats.norm.interval(0.95, loc = samp_avg, scale = pop_std / np.sqrt(n))
+            st.write('95% confidence interval for population mean:', interval)
+            st.write("Here the confidence interval do not contain the value in the null hypothesis (i.e. 26), thus we reject the null hypothesis and conclude that the average length of rod is not 26 cm.")
+        st.markdown("---")
+        
+def z_test(pop_mean, pop_std, n, samp_mean):
+    z_score = (samp_mean - pop_mean) / (pop_std / np.sqrt(n))
+    return z_score
+
+def t_test(pop_mean, samp_std, n, samp_mean):
+    t_score = (samp_mean - pop_mean) / (samp_std / np.sqrt(n))
+    return t_score
+
+with q14:
+    if sbar=="Day 02":
+        q = f"**Q.14. The production manager at tea emporium claims that the weight of a green tea bag is less than 3.5 g. To test the manager's claim consider a sample of 50 tea bags. The sample average weight is found to be 3.28 g with a standard deviation of 0.6 g. \
+            Use the p-value technique to test the claim at a 10% level of significance.**"
+        st.markdown(q)
+        approach = f"The Null and Alternative Hypothesis  is:"
+        st.markdown(approach)
+        st.latex(r''' Ho:\mu \geq 3.5 ''')
+        st.latex(r''' H1:\mu < 3.5 ''')
+        pressed = st.button("Q.14. Solution", True)
+        if pressed:
+            #st.write("**Approach: As the Population SD is given, we use the Z-distribution to calculate the confidence interval.**")
+            n = 50
+            pop_mean = 3.5
+            samp_std = 0.6
+            samp_mean = 3.28
+            t_score = t_test(pop_mean, samp_std, n, samp_mean)
+            st.write('T Test Statistic:', t_score)
+            p_value = stats.t.cdf(t_score, n-1)
+            st.write('P-Value:', p_value)
+            st.write("Here the p-value is less than 0.1, thus we **reject the null hypothesis** and conclude that the **average weight of a green tea bag is less than 3.5 gm.**")
+        st.markdown("---")
+        
+with q15:
+    if sbar=="Day 02":
+        q = f"**Q.15. The physician at university claims that the average height of male students in the university hostel is more than \
+            175 cm with a standard deviation of 8 cm. \
+                To test the claim the physical trainer at a university collects the data of 75 male students in the hostel and \
+                    calculate the average height of those 75 students as 176.3 cm. \
+            Test the physician's claim at 95% confidence.**"
+        st.markdown(q)
+        approach = f"The Null and Alternative Hypothesis  is:"
+        st.markdown(approach)
+        st.latex(r''' Ho:\mu \leq 175 ''')
+        st.latex(r''' H1:\mu > 175 ''')
+        pressed = st.button("Q.15. Solution", True)
+        if pressed:
+            n = 75
+            pop_mean = 175
+            pop_std = 8
+            samp_mean = 176.3
+            z_score = z_test(pop_mean, pop_std, n, samp_mean)
+            st.write('Z Test Statistic:', z_score)
+            p_value = stats.norm.cdf(z_score)
+            st.write('P-Value:', p_value)
+            st.write("Here the p-value is greater than 0.05, thus we ** fail to reject the null hypothesis** meaning avg height is 175 or less")
+        st.markdown("---")
+        
+with q16:
+    if sbar=="Day 02":
+        q = f"**Q.16. The quality control department at a soap company states that their herbal soap contains 28 ml of palm oil with a standard deviation of 3.5 ml. A sample of 120 soaps is considered. The average amount of palm oil in the sample is 27.6 ml.\
+            Test whether the amount of palm oil is different than 28 ml using the 90% confidence interval.**"
+        st.markdown(q)
+        approach = f"The Null and Alternative Hypothesis  is:"
+        st.markdown(approach)
+        st.latex(r''' Ho:\mu = 28 ''')
+        st.latex(r''' H1:\mu \not= 28 ''')
+        pressed = st.button("Q.16. Solution", True)
+        if pressed:
+            n = 120
+            #pop_mean = 175
+            pop_std = 3.5
+            samp_mean = 27.6
+            interval = stats.norm.interval(0.90, loc = samp_mean, scale = pop_std / np.sqrt(n))
+            st.write('90% confidence interval for population mean:', interval)
+            st.write("Here the confidence interval contains the value in the null hypothesis (i.e. 28), \
+                thus we fail to reject (i.e. accept) the null hypothesis and conclude that the amount of palm oil in the herbal soap is 28 ml.")
+        st.markdown("---")
+        
+############################################ D A Y 0 3 ##############################################################################
+#***********************************************************************************************************************************#
 
