@@ -1,4 +1,3 @@
-from types import CodeType
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -6,6 +5,7 @@ st.set_page_config(layout="wide")
 import scipy.stats as stats
 import random
 from statsmodels.stats import weightstats as stest
+import statsmodels.api as sm
 
 # SideBar Radio Button
 sbar = st.sidebar.radio(label = "Statistics Take Homes", options = ["Day 01", "Day 02", "Day 03", "Day 04"])
@@ -592,4 +592,221 @@ with q16:
         
 ############################################ D A Y 0 3 ##############################################################################
 #***********************************************************************************************************************************#
+# 1. A financial firm AlpaMoney has recently started their online payment gateway and claims that the level of customer satisfaction 
+# about the transactions is the same as that of their competitor firm PayEarly. Consider the equality of an average level of satisfaction 
+# as the null hypothesis and test the claim using a critical value method with 90% confidence.
+with q1:
+    if sbar=="Day 03":
+        q = f"**Q.1. A financial firm AlpaMoney has recently started their online payment gateway and claims that the level of customer \
+            satisfaction about the transactions is the same as that of their competitor firm PayEarly. \
+                Consider the equality of an average level of satisfaction as the null hypothesis and test the claim using a critical value \
+                    method with 90% confidence. Statistics given for Alpha Money and Pay Early are sample_mean1 = 4.23, \
+                        sample_mean2 = 3.56, samplesd1 = 1.6, samplesd2 = 0.72, sample1count = 527, sample2count = 652**"
+        st.markdown(q)
+        pressed = st.button("Q.1. Solution", True)
+        if pressed:
+            z_val = np.abs(round(stats.norm.isf(q = 0.1/2), 2))
+            st.write('Critical value for two-tailed Z-test:', z_val)
+            def TwoSampZTest(samp_mean_1, samp_mean_2, samp_std_1, samp_std_2, value, n1, n2):   
+                # calculate the test statistic
+                denominator = np.sqrt((samp_std_1**2 / n1) + (samp_std_2**2 / n2))
+                zscore = ((samp_mean_1 - samp_mean_2) - (value)) / denominator
+                # return the z-score
+                return zscore
+            sm_1 = 4.23
+            sm_2 = 3.56
+            sstd_1 = 1.6
+            sstd_2 = 0.72
+            null_val = 0
+            n_1 = 527
+            n_2 = 652
+            zscore = TwoSampZTest(samp_mean_1 = sm_1, samp_mean_2 = sm_2, samp_std_1 = sstd_1, samp_std_2 = sstd_2, value = null_val, 
+                      n1 = n_1, n2 = n_2)
+            st.write("Z Test Statistic", zscore)
+            st.write("**Here the z-score is greater than 1.64. Thus, we reject the null hypothesis and conclude that the customer level of satisfaction for both the companies is not the same.**")
+        st.markdown("---")
 
+# 2. The economic journal claims that the students who graduated from tier 1 universities get more salary than the average salary of 35000$. A random sample of 20 graduated students is selected to test the claim. Use p-value criteria to test the claim with 0.1 as a level of significance.
+
+with q2:
+    if sbar=="Day 03":
+        q = f"**Q.2. The economic journal claims that the students who graduated from tier 1 universities get more salary than the \
+            average salary of 35000$. A random sample of 20 graduated students is selected to test the claim. \
+            Use p-value criteria to test the claim with 0.1 as a level of significance.**"
+        st.markdown(q)
+        
+        s = f"salary = [29560, 26534, 31020, 44300, 52335, 69190, 71100, 80100, 90000, 41002, 46118, 88129, 79713, 95881, 47989, 15188, 91631, 96189, 77819, 79590])"
+        st.markdown(s)        
+        pressed = st.button("Q.2. Solution", True)
+        if pressed:
+            st.markdown("The null and alternative hypothesis is:")
+            st.latex(r'''H0: \mu \leq 35000 dollars''')
+            st.latex(r'''H1: \mu > 35000 dollars ''')
+            
+            salary = [29560, 26534, 31020, 44300, 52335, 69190, 71100, 80100, 90000, 41002, 46118, 88129, 79713, 95881, 47989, 15188,
+          91631, 96189, 77819, 79590]
+            # calculate sample mean
+            sample_avg = np.mean(salary)
+            st.write("Sample Mean", sample_avg)
+            # calculate sample standard deviation
+            sample_std = np.std(salary)
+            st.write("Sample Standard Deviation", sample_std)
+            # sample size
+            n = len(salary)
+            # degrees of freedom for 1 sample t-test
+            st.write('Degrees of freedom:', n - 1)
+            st.caption("Lets Check the Normality of the Data")
+            with st.echo():
+                teststatistic, pvalue = stats.shapiro(salary)
+                # use 'ttest_1samp()' to calculate the test statistic and corresponding p-value for 2-tailed test
+                # pass the sample data to the parameter, 'a'
+                # pass the average value in the null hypothesis to the parameter, 'popmean'
+                t_stat, p_val = stats.ttest_1samp(a = salary, popmean = 35000)
+            st.write("Test Statistic_Shapiro:", teststatistic)
+            st.write("Pvalue_Shapiro:", pvalue)
+            st.write("From the above result, we can see that the p-value is greater than 0.05, thus we can say that the data is normally distributed.")
+            req_p_val = p_val/2
+            st.write("Test Statistic:", t_stat)
+            st.caption("Note - In our example, the hypothesis test is one-tailed. Thus, we divide the two-tailed probability by 2 to obtain the one-tailed probability.")
+            st.write("Pvalue:", req_p_val)
+            st.write("**We can see that the p-value is less than 0.1. \
+                Thus, we reject the null hypothesis and there is enough evidence to conclude that the students who graduated from tier 1 universities get more salary than 35000$.**")
+        st.markdown("---")
+                
+# 3. Amy and Susan are national level swimmers. Their coach conducts five rounds each of 400 m and records the time taken by the individuals. Perform a two sample t-test to test whether there is any difference between the average time taken by Amy and Susan. Use 0.05 as a level of significance.
+
+with q3:
+    if sbar=="Day 03":
+        q = f"**Q.3. Amy and Susan are national level swimmers. \
+            Their coach conducts five rounds each of 400 m and records the time taken by the individuals. \
+                Perform a two sample t-test to test whether there is any difference between the average time taken by Amy and Susan. Use 0.05 as a level of significance.**"
+        st.markdown(q)
+        st.write("""
+                **Use the timing (in minutes) given below:**
+                * Amy_time = [4.2, 3, 3.8, 5, 4.6]
+                * Susan_time = [5.2, 4.6, 3.9, 4.4, 5]""")
+        pressed = st.button("Q.3. Solution", True)
+        if pressed:
+            
+            Amy_time = [4.2, 3, 3.8, 5, 4.6]
+            Susan_time = [5.2, 4.6, 3.9, 4.4, 5]
+
+            # time taken by both the swimmers
+            time = [4.2, 3, 3.8, 5, 4.6, 5.2, 4.6, 3.9, 4.4, 5]
+            st.caption("Checking the Normality of the Data")
+            tstats, pval = stats.shapiro(time)
+            st.write("Test Stats_Shapiro: ", tstats)
+            st.write("Pvalue_Shapiro: ", pval)
+            st.write("**Conclusion:** From the above result, we can see that the p-value is greater than 0.05, thus we can say that the time taken by both the swimmers is normally distributed.")
+            # perform Levene's test
+            # levene() returns a tuple having the values of test statistics and the corresponding p-value
+            st.caption("Performing Levene's Test")
+            stat, p_value = stats.levene(Amy_time, Susan_time)
+            st.write("Test Stats_Levene: ", stat)
+            st.write("Pvalue_Levene: ", p_value)
+            st.write("**Conclusion:**From the above result, we can see that the p-value is greater than 0.05, thus we can say that the population variances are equal.")
+            st.markdown("**The null and alternative hypothesis is:**")
+            st.write('''**H0: There is no difference between the average time taken by Amy and Susan ( 𝜇1−𝜇2=0 )**''')
+            st.write('''**H1: There is difference between the average time taken by Amy and Susan ( 𝜇1−𝜇2≠0 )**''')
+            # size of first sample
+            n_1 = len(Amy_time)
+
+            # size of second sample
+            n_2 = len(Susan_time)
+
+            # degrees of freedom for 2 sample t-test
+            st.write('Degrees of freedom:', n_1 + n_2 - 2)
+            t_stat, p_val = stats.ttest_ind(a = Amy_time, b = Susan_time)
+            st.write("Test Statistic:", t_stat)
+            st.write("P Value:", p_val)
+            st.caption("Now Draw the Conclusions...")
+        st.markdown("---")
+            
+# 3. Amy and Susan are national level swimmers. Their coach conducts five rounds each of 400 m and records the time taken by the individuals. Perform a two sample t-test to test whether there is any difference between the average time taken by Amy and Susan. Use 0.05 as a level of significance.
+
+with q4:
+    if sbar=="Day 03":
+        q = f"**Q.4. A multinational company had organized a presentation activity to test the soft skills of their 6 sales executives and then offered them a skill development course. After the completion of the course, the executives again appeared for the presentation and the scores before and after the course are recorded. Test the company's claim that the course was effective in developing soft skills with 90% confidence using the p-value technique.**"
+        st.markdown(q)
+        st.caption("Do it yourself")
+        
+    st.markdown("---")
+    
+#5. A survey conducted by the department of education states that the proportion of students who quit education due to financial crisis is more than 38%. To test this claim a group of 450 students is selected out of which 205 are found to be dropped out from school due to financial crisis. Test the claim using a critical value method with 95% confidence.
+
+with q5:
+    if sbar=="Day 03":
+        q = f"**Q.5. A survey conducted by the department of education states that the proportion of students who quit education due to financial crisis is more than 38%. To test this claim a group of 450 students is selected out of which 205 are found to be dropped out from school due to financial crisis. Test the claim using a critical value method with 95% confidence.**"
+        st.markdown(q)
+        pressed = st.button("Q.5. Solution", True)
+        if pressed:
+            st.markdown("**The null and alternative hypothesis is:**")
+            st.latex(r'''H0: P \leq 0.38''')
+            st.latex(r'''H1: P > 0.38 ''')
+            z_val = np.abs(round(stats.norm.isf(q = 0.05), 2))
+            st.write('Critical value for one-tailed Z-test:', z_val)
+            # sample size
+            n = 450
+            # number of children who quit the school
+            x = 205
+            # sample proportion
+            p_samp = x / n
+            # hypothesized proportion
+            hypo_p = 0.38
+            # calculate test statistic value for 1 sample proportion test
+            z_prop = (p_samp - hypo_p) / np.sqrt((hypo_p * (1 - hypo_p)) / n)
+            st.write('Test statistic:', z_prop)
+            st.write("Here the test statistic is greater than the critical value (= 1.64). Thus, we reject the null hypothesis and conclude that there is enough evidence to state that the proportion of students who quit education due to financial crisis is more than 38%.")
+            
+        st.markdown("---")
+
+#6. Two leading medical institutes CureOn and MedFirst have produced new vaccines on ebola. The vaccine produced by CureOn is given to 252 people in the UK out of which 78 had severe side-effects also the vaccine produced by MedFirst is given to 425 people in the UK out of which 92 had severe side-effects. Can we conclude that the vaccine produced by MedFirst is more reliable? Test the claim using p-value technique with 99% confidence.
+with q6:
+    if sbar=="Day 03":
+        q = f"**Q.6. Two leading medical institutes CureOn and MedFirst have produced new vaccines on ebola. \
+            The vaccine produced by CureOn is given to 252 people in the UK out of which 78 had severe side-effects also the vaccine produced by MedFirst is given to 425 people in the UK out of which 92 had severe side-effects. Can we conclude that the vaccine produced by MedFirst is more reliable? Test the claim using p-value technique with 99% confidence.**"
+        st.markdown(q)
+        pressed = st.button("Q.6. Solution", True)
+        if pressed:
+            st.markdown("**The null and alternative hypothesis is:**")
+            st.latex(r'''H0: P1 \leq P2''')
+            st.latex(r'''H1: P1 > P2 ''')
+            with st.echo():
+                
+                CureOn_size = 252
+                Med_size = 425
+                CureOn_eff = 78
+                Med_eff = 92
+                z_prop, p_val = sm.stats.proportions_ztest(count = np.array([CureOn_eff, Med_eff]), 
+                                                nobs = np.array([CureOn_size, Med_size]),  
+                                                alternative = 'larger')
+                st.write('p-value:', p_val)
+            st.write("Here the p-value is less than 0.01. Thus, we reject the null hypothesis and conclude that the vaccine produced by MedFirst is more reliable.")
+            
+        st.markdown("---")
+
+# 7. A research paper in the medical journal claims that the average height of females in Nebraska is less than 168 cm. A group of physicians conducted a survey and collected the heights of 95 females from Nebraska, and recorded the average height as 163 cm with a standard deviation of 7 cm. Assume that the sample is drawn from a normally distributed population. Test the claim in the research paper using the 95% confidence interval for the population mean.
+
+with q7:
+    if sbar=="Day 03":
+        q = f"**Q.7. A research paper in the medical journal claims that the average height of females in Nebraska is less than 168 cm. A group of physicians conducted a survey and collected the heights of 95 females from Nebraska, and recorded the average height as 163 cm with a standard deviation of 7 cm. Assume that the sample is drawn from a normally distributed population. Test the claim in the research paper using the 95% confidence interval for the population mean.**"
+        st.markdown(q)
+        pressed = st.button("Q.7. Solution", True)
+        if pressed:
+            st.markdown("**The null and alternative hypothesis is:**")
+            st.latex(r'''H0:\mu \geq 168''')
+            st.latex(r'''H1:\mu < 168 ''')
+            with st.echo():
+                n = 95
+                # sample mean 
+                samp_mean = 163
+                
+                # sample standard deviation
+                samp_std = 7
+               
+                # Creating Confidence Interval
+                interval = stats.norm.interval(0.95, loc = samp_mean, scale = samp_std / np.sqrt(n))
+                
+                st.write('Confidence interval for population mean:', interval)
+                
+            st.write("Here the confidence interval does not contain the value in the null hypothesis (i.e. 168), thus we reject the null hypothesis and thus, we have enough evidence to conclude that the average height of females in Nebraska is less than 168 cm.")
