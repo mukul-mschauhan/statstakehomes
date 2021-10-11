@@ -722,14 +722,32 @@ with q3:
             st.caption("Now Draw the Conclusions...")
         st.markdown("---")
             
-# 3. Amy and Susan are national level swimmers. Their coach conducts five rounds each of 400 m and records the time taken by the individuals. Perform a two sample t-test to test whether there is any difference between the average time taken by Amy and Susan. Use 0.05 as a level of significance.
+# 4. A multinational company had organized a presentation activity to test the soft skills of their 6 sales executives and then offered them a skill development course. After the completion of the course, the executives again appeared for the presentation and the scores before and after the course are recorded. Test the company's claim that the course was effective in developing soft skills with 90% confidence using the p-value technique
 
+df_score = pd.read_excel("data/paired_data.xlsx")
 with q4:
     if sbar=="Day 03":
         q = f"**Q.4. A multinational company had organized a presentation activity to test the soft skills of their 6 sales executives and then offered them a skill development course. After the completion of the course, the executives again appeared for the presentation and the scores before and after the course are recorded. Test the company's claim that the course was effective in developing soft skills with 90% confidence using the p-value technique.**"
         st.markdown(q)
-        st.caption("Do it yourself")
-        
+        pressed = st.button("Q.4. Solution", True)
+        if pressed:
+            st.write(df_score.head(2))
+            stat, p_value = stats.shapiro(df_score['before_score'])
+            st.write('Test statistic:', stat)
+            st.write('P-Value:', p_value)
+            st.write("**Inference:** From the above result, we can see that the p-value is greater than 0.05, thus we can say that the scores before the skill development course are normally distributed.")
+            stat, p_value = stats.shapiro(df_score['after_score'])
+            st.write('Test statistic:', stat)
+            st.write('P-Value:', p_value)
+            st.write("**Inference:** From the above result, we can see that the p-value is greater than 0.05, thus we can say that the scores after the skill development course are normally distributed.")
+            st.write('''
+                     The null and alternative hypothesis is:
+                     H0: The skill development course was not effective in developing the soft skills (mew<=0)
+                     H1: The skill development course was effective in developing the soft skills (mew>0)   
+                     ''')
+            t_stat, p_val = stats.ttest_rel(df_score['after_score'], df_score['before_score'])
+            st.write("Pvalue", pval)
+            st.write("We can see that the p-value is less than 0.1. Thus, we reject the null hypothesis and conclude that the skill development course was effective in developing soft skills of sales executives.")
     st.markdown("---")
     
 #5. A survey conducted by the department of education states that the proportion of students who quit education due to financial crisis is more than 38%. To test this claim a group of 450 students is selected out of which 205 are found to be dropped out from school due to financial crisis. Test the claim using a critical value method with 95% confidence.
